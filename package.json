@@ -1,0 +1,116 @@
+{
+  "name": "instant-notes",
+  "displayName": "Instant Notes",
+  "description": "一键调起 iPhone 摄像头拍照（连续互通相机），照片保存到当前文件所在文件夹，HEIC 自动转 JPEG。",
+  "version": "0.5.0",
+  "publisher": "local",
+  "license": "MIT",
+  "engines": {
+    "vscode": "^1.80.0"
+  },
+  "categories": [
+    "Other"
+  ],
+  "main": "./src/extension.js",
+  "activationEvents": [],
+  "contributes": {
+    "commands": [
+      {
+        "command": "instantNotes.takePhoto",
+        "title": "用 iPhone 拍照",
+        "category": "Instant Notes",
+        "icon": "$(device-camera)"
+      },
+      {
+        "command": "instantNotes.takePhotoInstant",
+        "title": "用 iPhone 立即拍照（网络摄像头模式）",
+        "category": "Instant Notes",
+        "icon": "$(device-camera)"
+      },
+      {
+        "command": "instantNotes.convertHeic",
+        "title": "HEIC 转 JPEG",
+        "category": "Instant Notes"
+      }
+    ],
+    "keybindings": [
+      {
+        "command": "instantNotes.takePhoto",
+        "key": "cmd+alt+p",
+        "mac": "cmd+alt+p"
+      }
+    ],
+    "menus": {
+      "editor/title": [
+        {
+          "command": "instantNotes.takePhoto",
+          "group": "navigation",
+          "when": "resourceScheme == file"
+        }
+      ],
+      "explorer/context": [
+        {
+          "command": "instantNotes.takePhoto",
+          "group": "instantNotes@1"
+        },
+        {
+          "command": "instantNotes.convertHeic",
+          "group": "instantNotes@2",
+          "when": "resourceExtname =~ /^\\.(heic|heif)$/i"
+        }
+      ],
+      "commandPalette": [
+        {
+          "command": "instantNotes.convertHeic",
+          "when": "false"
+        }
+      ]
+    },
+    "configuration": {
+      "title": "Instant Notes",
+      "properties": {
+        "instantNotes.jpegQuality": {
+          "type": "number",
+          "default": 0.92,
+          "minimum": 0.1,
+          "maximum": 1,
+          "description": "HEIC 转 JPEG 时的质量 (0.1–1)。"
+        },
+        "instantNotes.keepOriginalHeic": {
+          "type": "boolean",
+          "default": false,
+          "description": "转换后是否同时保留原始 HEIC 文件。"
+        },
+        "instantNotes.fileNamePattern": {
+          "type": "string",
+          "default": "IMG_${date}_${time}",
+          "description": "文件名（不含扩展名）。可用变量：${date} ${time} ${fileBasename}（当前文件名，不含扩展名）。"
+        },
+        "instantNotes.subfolder": {
+          "type": "string",
+          "default": "",
+          "description": "保存到当前文件夹下的子文件夹（如 images），留空表示直接保存在当前文件所在文件夹。"
+        },
+        "instantNotes.insertMarkdownLink": {
+          "type": "boolean",
+          "default": true,
+          "description": "当前文件是 Markdown 时，在光标处插入图片链接。"
+        },
+        "instantNotes.timeoutSeconds": {
+          "type": "number",
+          "default": 180,
+          "description": "等待拍摄的最长时间（秒）。"
+        },
+        "instantNotes.deviceName": {
+          "type": "string",
+          "default": "",
+          "description": "用哪台设备拍照（名称包含即可，如 iPhone）。留空则使用第一台找到的 iPhone/iPad。"
+        }
+      }
+    }
+  },
+  "scripts": {
+    "build-native": "./native/build.sh",
+    "package": "npx @vscode/vsce package --no-dependencies --allow-missing-repository"
+  }
+}
